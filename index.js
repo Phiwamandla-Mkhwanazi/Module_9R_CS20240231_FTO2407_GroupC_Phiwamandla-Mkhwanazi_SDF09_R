@@ -1,7 +1,8 @@
+/*Declare and Initialize Variables*/ 
 let player = 
 {
     name: "PM",
-    chips: 200 //Credits validation still to be completed. It also goes to negative values
+    chips: 200 // Initial chips
 }
 let cards = []
 let sum = 0
@@ -15,10 +16,10 @@ let cardsEl = document.getElementById("cards-el")
 let playerEl = document.getElementById("player-el")
 playerEl.textContent = player.name + ": $" + player.chips
 
-
+//Generating a random card function
 function getRandomCard() 
 {
-    let randomNumber = Math.floor( Math.random()*13 ) + 1
+    let randomNumber = Math.floor(Math.random() * 13) + 1
     
     if (randomNumber > 10) 
     {
@@ -27,12 +28,14 @@ function getRandomCard()
     else if (randomNumber === 1) 
     {
         return 11
-    } else 
+    } 
+    else 
     {
         return randomNumber
     }
 }
 
+//Game setup function and validation
 function startGame() 
 {
     isAlive = true
@@ -40,22 +43,29 @@ function startGame()
     let secondCard = getRandomCard()
     cards = [firstCard, secondCard]
     sum = firstCard + secondCard
+
+    //Reset the entire game
+    if (player.chips <= 0) 
+    {
+        messageEl.textContent = "Out of credits"
+        player.chips = 200;
+    }
     
     if(hasBlackJack === false)
         renderGame()
-    else
+    else 
     {
-        renderGame();
-        hasBlackJack = false; /*Modified the code to reset game after blackJack*/ 
+        renderGame()
+        hasBlackJack = false // Reset game after Blackjack
     }
-    
-        
 }
 
+//Rendering the game function
 function renderGame() 
 {
     cardsEl.textContent = "Cards: "
-    for (let i = 0; i < cards.length; i++) {
+    for (let i = 0; i < cards.length; i++) 
+    {
         cardsEl.textContent += cards[i] + " "
     }
     
@@ -68,22 +78,27 @@ function renderGame()
     else if (sum === 21) 
     {
         message = "You've got Blackjack!"
-        hasBlackJack = true;
-        player.chips += 100;
-
+        hasBlackJack = true
+        player.chips += 100
     } else 
     {
         message = "You're out of the game!"
-        isAlive = false;
-        player.chips -= 50;
+        isAlive = false
+        player.chips -= 50
+        if (player.chips <= 0) 
+        {
+            player.chips = 0
+            message = "Out of credits"
+        }
     }
     messageEl.textContent = message
-    
 
     playerEl.textContent = player.name + ": $" + player.chips
-    localStorage.setItem("chips", player.chips) //Implementation of localstorage to store credits
+    // Store credits in localStorage - not fully implemented
+    localStorage.setItem("chips", player.chips) 
 }
 
+//Getting a new card function
 function newCard() 
 {
     if (isAlive === true && hasBlackJack === false) 
@@ -91,6 +106,6 @@ function newCard()
         let card = getRandomCard()
         sum += card
         cards.push(card)
-        renderGame()        
+        renderGame()
     }
 }

@@ -1,11 +1,96 @@
-// 1. Create two variables, firstCard and secondCard. 
-// Set their values to a random number between 2-11
+let player = 
+{
+    name: "PM",
+    chips: 200 //Credits validation still to be completed. It also goes to negative values
+}
+let cards = []
+let sum = 0
+let hasBlackJack = false
+let isAlive = false
+let message = ""
+let messageEl = document.getElementById("message-el")
+let sumEl = document.getElementById("sum-el")
+let cardsEl = document.getElementById("cards-el")
 
-// 2. Create a variable, sum, and set it to the sum of the two cards
+let playerEl = document.getElementById("player-el")
+playerEl.textContent = player.name + ": $" + player.chips
 
-let firstCard = 6
-let secondCard = 9
 
-let sum = firstCard + secondCard
+function getRandomCard() 
+{
+    let randomNumber = Math.floor( Math.random()*13 ) + 1
+    
+    if (randomNumber > 10) 
+    {
+        return 10
+    } 
+    else if (randomNumber === 1) 
+    {
+        return 11
+    } else 
+    {
+        return randomNumber
+    }
+}
 
-console.log(sum)
+function startGame() 
+{
+    isAlive = true
+    let firstCard = getRandomCard()
+    let secondCard = getRandomCard()
+    cards = [firstCard, secondCard]
+    sum = firstCard + secondCard
+    
+    if(hasBlackJack === false)
+        renderGame()
+    else
+    {
+        renderGame();
+        hasBlackJack = false; /*Modified the code to reset game after blackJack*/ 
+    }
+    
+        
+}
+
+function renderGame() 
+{
+    cardsEl.textContent = "Cards: "
+    for (let i = 0; i < cards.length; i++) {
+        cardsEl.textContent += cards[i] + " "
+    }
+    
+    sumEl.textContent = "Sum: " + sum
+    
+    if (sum <= 20) 
+    {
+        message = "Do you want to draw a new card?"
+    } 
+    else if (sum === 21) 
+    {
+        message = "You've got Blackjack!"
+        hasBlackJack = true;
+        player.chips += 100;
+
+    } else 
+    {
+        message = "You're out of the game!"
+        isAlive = false;
+        player.chips -= 50;
+    }
+    messageEl.textContent = message
+    
+
+    playerEl.textContent = player.name + ": $" + player.chips
+    localStorage.setItem("chips", player.chips) //Implementation of localstorage to store credits
+}
+
+function newCard() 
+{
+    if (isAlive === true && hasBlackJack === false) 
+    {
+        let card = getRandomCard()
+        sum += card
+        cards.push(card)
+        renderGame()        
+    }
+}
